@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SKINORA — Personalized Skincare Intelligence & Companion</title>
+    <meta name="description"
+        content="Understand your skin, build a personalized routine, analyze ingredients, track habits, and monitor progress with SKINORA." />
+
+    <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Favicon & PWA Manifest for Android APK -->
+    <link rel="icon" type="image/png" href="icon.png" />
+    <link rel="apple-touch-icon" href="icon.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1C1917" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- CSS Styling -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app-container" class="app-container">
+
+        <!-- DESKTOP SIDEBAR NAVIGATION -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <img src="logo.png" alt="SKINORA Logo" class="brand-logo-img" />
+                    <span class="brand-name">SKINORA</span>
+                </div>
+                <p class="brand-tagline">Skincare Intelligence</p>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Main Navigation">
+                <div class="nav-section-label">MAIN</div>
+                <button class="nav-item active" data-view="dashboard" id="nav-dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-view="ai-plan" id="nav-ai-plan">
+                    <i data-lucide="sparkles"></i>
+                    <span>AI Skin Plan</span>
+                    <span class="nav-badge glow">AI</span>
+                </button>
+                <button class="nav-item" data-view="routine" id="nav-routine">
+                    <i data-lucide="sun"></i>
+                    <span>Daily Routine</span>
+                </button>
+
+                <div class="nav-section-label">TRACKING</div>
+                <button class="nav-item" data-view="tracker" id="nav-tracker">
+                    <i data-lucide="check-square"></i>
+                    <span>Habit Tracker</span>
+                </button>
+                <button class="nav-item" data-view="hydration" id="nav-hydration">
+                    <i data-lucide="droplet"></i>
+                    <span>Hydration Log</span>
+                </button>
+                <button class="nav-item" data-view="journal" id="nav-journal">
+                    <i data-lucide="book-open"></i>
+                    <span>Skin Journal</span>
+                </button>
+                <button class="nav-item" data-view="progress" id="nav-progress">
+                    <i data-lucide="trending-up"></i>
+                    <span>Analytics & Streaks</span>
+                </button>
+
+                <div class="nav-section-label">DISCOVER</div>
+                <button class="nav-item" data-view="ingredients" id="nav-ingredients">
+                    <i data-lucide="flask-conical"></i>
+                    <span>Ingredient Library</span>
+                </button>
+                <button class="nav-item" data-view="products" id="nav-products">
+                    <i data-lucide="shopping-bag"></i>
+                    <span>Product Matches</span>
+                </button>
+                <button class="nav-item" data-view="favorites" id="nav-favorites">
+                    <i data-lucide="heart"></i>
+                    <span>My Favorites</span>
+                    <span id="favorites-count-badge" class="nav-badge hidden">0</span>
+                </button>
+                <button class="nav-item" data-view="school" id="nav-school">
+                    <i data-lucide="graduation-cap"></i>
+                    <span>Skin School</span>
+                </button>
+
+                <div class="nav-section-label">SYSTEM</div>
+                <button class="nav-item" data-view="settings" id="nav-settings">
+                    <i data-lucide="sliders"></i>
+                    <span>Settings</span>
+                </button>
+                <button class="nav-item" data-view="landing" id="nav-landing">
+                    <i data-lucide="compass"></i>
+                    <span>Welcome Screen</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile-card">
+                    <div class="user-avatar" id="sidebar-user-avatar">S</div>
+                    <div class="user-info">
+                        <span class="user-name" id="sidebar-user-name">Glow Seeker</span>
+                        <span class="user-skin-type" id="sidebar-user-type">Profile Pending</span>
+                    </div>
+                </div>
+                <div class="theme-toggle-wrapper">
+                    <div class="theme-segmented-switch">
+                        <button class="theme-segment-btn" data-theme-val="light" aria-label="Switch to Light Theme">
+                            <i data-lucide="sun"></i>
+                            <span>Light</span>
+                        </button>
+                        <button class="theme-segment-btn" data-theme-val="dark" aria-label="Switch to Dark Theme">
+                            <i data-lucide="moon"></i>
+                            <span>Dark</span>
+                        </button>
+                        <div class="theme-slider-backdrop"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="main-wrapper">
+
+            <!-- TOP HEADER BAR (Mobile & Desktop Global Action Bar) -->
+            <header class="top-bar">
+                <button id="mobile-sidebar-toggle" class="icon-btn mobile-only" aria-label="Toggle Menu">
+                    <i data-lucide="menu"></i>
+                </button>
+
+                <div class="top-bar-brand mobile-only">
+                    <img src="icon.png" alt="SKINORA Logo" class="brand-logo-img" />
+                    <span class="brand-name">SKINORA</span>
+                </div>
+
+                <div class="search-trigger-container">
+                    <button id="global-search-btn" class="search-trigger-btn">
+                        <i data-lucide="search"></i>
+                        <span>Search ingredients, routines, guides...</span>
+                        <kbd class="shortcut-kbd">⌘K</kbd>
+                    </button>
+                </div>
+
+                <div class="top-bar-actions">
+                    <button id="quick-streak-badge" class="badge-button streak-btn"
+                        title="Current Daily Routine Streak">
+                        <i data-lucide="flame" class="fire-icon"></i>
+                        <span id="header-streak-count">0</span> Days
+                    </button>
+                    <button id="quick-water-btn" class="badge-button water-btn" title="Log Hydration">
+                        <i data-lucide="droplet"></i>
+                        <span id="header-water-count">0.0 L</span>
+                    </button>
+                    <button id="header-theme-toggle" class="header-theme-btn" aria-label="Toggle theme"
+                        title="Toggle Light/Dark Theme">
+                        <span class="theme-icon-container">
+                            <i data-lucide="sun" class="sun-icon"></i>
+                            <i data-lucide="moon" class="moon-icon"></i>
+                        </span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- VIEW PANELS CONTAINER -->
+            <main id="view-container" class="view-container">
+
+                <!-- ========================================== -->
+                <!-- VIEW 1: LANDING / WELCOME SCREEN -->
+                <!-- ========================================== -->
+                <section id="view-landing" class="view-panel active">
+                    <div class="landing-hero-container">
+                        <div class="hero-backdrop-glow"></div>
+
+                        <div class="landing-hero-grid">
+                            <div class="hero-content">
+                                <div class="hero-eyebrow">
+                                    <span class="sparkle-icon">✦</span>
+                                    <span>PERSONALIZED SKIN INTELLIGENCE</span>
+                                </div>
+                                <h1 class="hero-title">
+                                    Your skin has a story.<br>
+                                    Let <span class="text-gradient">SKINORA</span> help you understand it.
+                                </h1>
+                                <p class="hero-description">
+                                    Discover your skin type, understand your specific concerns, build a personalized
+                                    AI-assisted routine, and track your daily hydration & habits — all in one calm,
+                                    scientific companion.
+                                </p>
+
+                                <div class="hero-cta-group">
+                                    <button id="start-onboarding-btn" class="btn btn-primary btn-lg"
+                                        data-view="onboarding">
+                                        <span>Discover My Skin</span>
+                                        <i data-lucide="sparkles"></i>
+                                    </button>
+                                    <button id="explore-school-btn" class="btn btn-secondary btn-lg" data-view="school">
+                                        <span>Explore Skin School</span>
+                                        <i data-lucide="arrow-right"></i>
+                                    </button>
+                                </div>
+
+                                <div class="hero-quick-demos">
+                                    <span class="quick-demo-label">Instant Demos:</span>
+                                    <div class="quick-demo-chips">
+                                        <button data-action="load-sample-oily" class="demo-chip">
+                                            <span>⚡ Oily Profile</span>
+                                        </button>
+                                        <button data-action="load-sample-dry" class="demo-chip">
+                                            <span>⚡ Dry Profile</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="hero-trust-badges">
+                                    <div class="trust-item">
+                                        <i data-lucide="shield-check"></i>
+                                        <span>Dermatologist Approved Guidance</span>
+                                    </div>
+                                    <div class="trust-item">
+                                        <i data-lucide="cpu"></i>
+                                        <span>Gemini AI Routine Engine</span>
+                                    </div>
+                                    <div class="trust-item">
+                                        <i data-lucide="lock"></i>
+                                        <span>100% Private (Saved Locally)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="hero-visual">
+                                <div class="hero-card-stack">
+                                    <!-- Abstract CSS Artwork & Feature Highlights -->
+                                    <div class="hero-main-card glass-card">
+                                        <div class="aura-circle"></div>
+                                        <div class="skincare-droplet-art">
+                                            <svg viewBox="0 0 100 100" class="droplet-svg">
+                                                <defs>
+                                                    <linearGradient id="dropGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                        <stop offset="0%" stop-color="var(--accent-rose)"
+                                                            stop-opacity="0.8" />
+                                                        <stop offset="50%" stop-color="var(--accent-peach)"
+                                                            stop-opacity="0.9" />
+                                                        <stop offset="100%" stop-color="var(--accent-sage)"
+                                                            stop-opacity="0.7" />
+                                                    </linearGradient>
+                                                </defs>
+                                                <path
+                                                    d="M50 15 C50 15 25 50 25 68 C25 82 36 90 50 90 C64 90 75 82 75 68 C75 50 50 15 50 15 Z"
+                                                    fill="url(#dropGrad)" />
+                                            </svg>
+                                        </div>
+
+                                        <div class="floating-badge badge-top-right">
+                                            <i data-lucide="sparkles"></i>
+                                            <span>AI Balance Score: 94%</span>
+                                        </div>
+
+                                        <div class="floating-badge badge-bottom-left">
+                                            <i data-lucide="flame"></i>
+                                            <span>7-Day Streak Active</span>
+                                        </div>
+
+                                        <div class="card-inner-details">
+                                            <div class="mini-routine-preview">
+                                                <div class="mini-step">
+                                                    <span class="step-num">01</span>
+                                                    <span class="step-text">Gentle Hydrating Cleanser</span>
+                                                </div>
+                                                <div class="mini-step">
+                                                    <span class="step-num">02</span>
+                                                    <span class="step-text">Niacinamide 5% Active Serum</span>
+                                                </div>
+                                                <div class="mini-step">
+                                                    <span class="step-num">03</span>
+                                                    <span class="step-text">Barrier Ceramide Moisturizer</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- WORKFLOW PILLARS SECTION -->
+                        <div class="landing-pillars-section">
+                            <h2 class="section-title text-center">How SKINORA Works For You</h2>
+                            <p class="section-subtitle text-center">A science-backed, six-step journey tailored
+                                specifically for your skin goals.</p>
+
+                            <div class="pillars-grid">
+                                <div class="pillar-card glass-card">
+                                    <div class="pillar-icon"><i data-lucide="compass"></i></div>
+                                    <h3>1. DISCOVER</h3>
+                                    <p>Uncover your true skin type, barrier health, and environmental factors through
+                                        intuitive assessment.</p>
+                                </div>
+
+                                <div class="pillar-card glass-card">
+                                    <div class="pillar-icon"><i data-lucide="brain"></i></div>
+                                    <h3>2. UNDERSTAND</h3>
+                                    <p>Learn why specific breakouts, redness, or dryness occur without confusing jargon.
+                                    </p>
+                                </div>
+
+                                <div class="pillar-card glass-card">
+                                    <div class="pillar-icon"><i data-lucide="sparkles"></i></div>
+                                    <h3>3. PERSONALIZE</h3>
+                                    <p>Receive an intelligent morning & evening skincare plan custom tailored by Gemini
+                                        AI.</p>
+                                </div>
+
+                                <div class="pillar-card glass-card">
+                                    <div class="pillar-icon"><i data-lucide="flask-conical"></i></div>
+                                    <h3>4. RECOMMEND</h3>
+                                    <p>Explore safe, synergized ingredients like Niacinamide, Hyaluronic Acid, and
+                                        Ceramides.</p>
+                                </div>
+
+                                <div class="pillar-card glass-card">
+                                    <div class="pillar-icon"><i data-lucide="check-circle-2"></i></div>
+                                    <h3>5. TRACK</h3>
+                                    <p>Log hydration, check off your daily steps, track streak milestones, and keep a
+                                        skin journal.</p>
+                                </div>
+
+                                <div class="pillar-card glass-card">
+                                    <div class="pillar-icon"><i data-lucide="graduation-cap"></i></div>
+                                    <h3>6. LEARN</h3>
+                                    <p>Master ingredient layerings, sunscreen science, and skin barrier maintenance in
+                                        Skin School.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 2: MULTI-STEP SKIN PROFILE ONBOARDING -->
+                <!-- ========================================== -->
+                <section id="view-onboarding" class="view-panel">
+                    <div class="onboarding-container glass-card">
+
+                        <!-- Progress Bar Header -->
+                        <div class="onboarding-header">
+                            <div class="step-indicator">
+                                <span id="onboarding-step-label">Step 1 of 5</span>
+                                <span id="onboarding-step-title">Skin Type</span>
+                            </div>
+                            <div class="progress-bar-track">
+                                <div id="onboarding-progress-fill" class="progress-bar-fill" style="width: 20%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 1: SKIN TYPE -->
+                        <div class="onboarding-step-panel active" data-step="1">
+                            <h2 class="step-heading">What is your skin type?</h2>
+                            <p class="step-subheading">Choose the option that best describes how your skin feels most of
+                                the time.</p>
+
+                            <div class="options-grid skin-type-grid">
+                                <div class="option-card" data-value="Normal">
+                                    <div class="option-icon"><i data-lucide="smile"></i></div>
+                                    <h3>Normal</h3>
+                                    <p>Balanced moisture, minimal sensitivity, rarely feels too oily or dry.</p>
+                                </div>
+                                <div class="option-card" data-value="Dry">
+                                    <div class="option-icon"><i data-lucide="sun-medium"></i></div>
+                                    <h3>Dry</h3>
+                                    <p>Feels tight, flaky, dull, or rough, especially after cleansing.</p>
+                                </div>
+                                <div class="option-card" data-value="Oily">
+                                    <div class="option-icon"><i data-lucide="droplet"></i></div>
+                                    <h3>Oily</h3>
+                                    <p>Excess shine all over, enlarged pores, prone to breakouts.</p>
+                                </div>
+                                <div class="option-card" data-value="Combination">
+                                    <div class="option-icon"><i data-lucide="split"></i></div>
+                                    <h3>Combination</h3>
+                                    <p>Oily T-zone (forehead, nose, chin) with normal or dry cheeks.</p>
+                                </div>
+                                <div class="option-card" data-value="Sensitive">
+                                    <div class="option-icon"><i data-lucide="shield-alert"></i></div>
+                                    <h3>Sensitive</h3>
+                                    <p>Easily turns red, stings, reacts to products, flush or itchy.</p>
+                                </div>
+                                <div class="option-card" data-value="Not sure">
+                                    <div class="option-icon"><i data-lucide="help-circle"></i></div>
+                                    <h3>Not Sure</h3>
+                                    <p>Let SKINORA analyze your concerns and lifestyle to suggest your type.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 2: CONCERNS -->
+                        <div class="onboarding-step-panel" data-step="2">
+                            <h2 class="step-heading">What are you noticing about your skin?</h2>
+                            <p class="step-subheading">Select all concerns you would like your skincare routine to
+                                address.</p>
+
+                            <div class="options-grid concerns-grid">
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Acne / Breakouts" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Acne / Breakouts</span>
+                                        <span class="desc">Active pimples, whiteheads, or clogged pores</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Excess Oil" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Excess Oil</span>
+                                        <span class="desc">Midday shine and greasy feeling</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Dryness" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Dryness</span>
+                                        <span class="desc">Flaking, tightness, or rough patches</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Dehydration" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Dehydration</span>
+                                        <span class="desc">Skin lacks water content and bouncy plumpness</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Dullness" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Dullness</span>
+                                        <span class="desc">Lack of radiance, tired-looking complexion</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Dark Spots" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Dark Spots</span>
+                                        <span class="desc">Post-acne marks or hyperpigmentation</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Uneven Skin Tone" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Uneven Skin Tone</span>
+                                        <span class="desc">Discoloration or blotchy areas</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Redness" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Redness</span>
+                                        <span class="desc">Flushing, rosacea symptoms, or irritation</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Sensitivity" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Sensitivity</span>
+                                        <span class="desc">Stinging when applying products</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Rough Texture" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Rough Texture</span>
+                                        <span class="desc">Uneven surface feeling or tiny bumps</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Enlarged Pores" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Enlarged Pores</span>
+                                        <span class="desc">Visibly stretched pores, blackheads</span>
+                                    </div>
+                                </label>
+                                <label class="check-option-card">
+                                    <input type="checkbox" value="Fine Lines" name="concerns">
+                                    <span class="check-box-custom"></span>
+                                    <div class="check-label-content">
+                                        <span class="title">Fine Lines</span>
+                                        <span class="desc">Early aging signs around eyes or smile lines</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- STEP 3: LIFESTYLE -->
+                        <div class="onboarding-step-panel" data-step="3">
+                            <h2 class="step-heading">Tell us about your lifestyle</h2>
+                            <p class="step-subheading">Environmental & daily factors play a major role in skin health.
+                            </p>
+
+                            <div class="lifestyle-controls-container">
+                                <div class="control-group">
+                                    <label for="sleep-quality-select">Sleep Quality (Hours/Night)</label>
+                                    <select id="sleep-quality-select" class="form-select">
+                                        <option value="Less than 6 hours (Poor)">Less than 6 hours (Restless)</option>
+                                        <option value="6-7 hours (Moderate)" selected>6-7 hours (Moderate)</option>
+                                        <option value="7-9 hours (Optimal)">7-9 hours (Optimal Rest)</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="water-intake-range">Daily Water Intake (<span
+                                            id="water-slider-val">2.0</span> L)</label>
+                                    <input type="range" id="water-intake-range" min="0.5" max="4.0" step="0.5"
+                                        value="2.0" class="form-range">
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="stress-level-select">Daily Stress Level</label>
+                                    <select id="stress-level-select" class="form-select">
+                                        <option value="Low Stress">Low Stress (Calm)</option>
+                                        <option value="Moderate Stress" selected>Moderate Stress</option>
+                                        <option value="High Stress">High Stress (Demanding)</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="sun-exposure-select">Outdoor & Sun Exposure</label>
+                                    <select id="sun-exposure-select" class="form-select">
+                                        <option value="Minimal (Indoors)">Minimal (Mostly Indoors)</option>
+                                        <option value="Moderate (1-2 hours)" selected>Moderate (1-2 hours daily)
+                                        </option>
+                                        <option value="High (Direct sunlight 3+ hrs)">High (Direct sunlight 3+ hours)
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="makeup-usage-select">Makeup Usage</label>
+                                    <select id="makeup-usage-select" class="form-select">
+                                        <option value="Rarely / Never">Rarely / Never</option>
+                                        <option value="Light / Tinted Moisturizer" selected>Light / Tinted Moisturizer
+                                        </option>
+                                        <option value="Heavy / Full Coverage Daily">Heavy / Full Coverage Daily</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 4: HABITS -->
+                        <div class="onboarding-step-panel" data-step="4">
+                            <h2 class="step-heading">Your skincare habits</h2>
+                            <p class="step-subheading">Help us calibrate the complexity of your recommended routine.</p>
+
+                            <div class="habits-options-container">
+                                <div class="control-group">
+                                    <label>Which products do you currently use? (Select all)</label>
+                                    <div class="pill-checkboxes">
+                                        <label class="pill-check"><input type="checkbox" value="Cleanser"
+                                                name="habits-products" checked> <span>Cleanser</span></label>
+                                        <label class="pill-check"><input type="checkbox" value="Moisturizer"
+                                                name="habits-products" checked> <span>Moisturizer</span></label>
+                                        <label class="pill-check"><input type="checkbox" value="Sunscreen"
+                                                name="habits-products" checked> <span>Sunscreen</span></label>
+                                        <label class="pill-check"><input type="checkbox" value="Active Serums"
+                                                name="habits-products"> <span>Active Serums</span></label>
+                                        <label class="pill-check"><input type="checkbox" value="Exfoliants"
+                                                name="habits-products"> <span>Exfoliants</span></label>
+                                        <label class="pill-check"><input type="checkbox" value="Eye Cream"
+                                                name="habits-products"> <span>Eye Cream</span></label>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="exfoliation-freq">Exfoliation Frequency</label>
+                                    <select id="exfoliation-freq" class="form-select">
+                                        <option value="Never">Never</option>
+                                        <option value="1-2 times per week" selected>1-2 times per week</option>
+                                        <option value="3+ times per week">3+ times per week</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="routine-consistency">Night Routine Consistency</label>
+                                    <select id="routine-consistency" class="form-select">
+                                        <option value="Inconsistent (A few times a week)">Inconsistent (A few times a
+                                            week)</option>
+                                        <option value="Moderate (Most nights)" selected>Moderate (Most nights)</option>
+                                        <option value="Very Consistent (Every single night)">Very Consistent (Every
+                                            single night)</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="user-display-name">Your Preferred Name</label>
+                                    <input type="text" id="user-display-name" class="form-input" placeholder="e.g. Alex"
+                                        value="Glow Seeker">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 5: SUMMARY & PLAN GENERATOR -->
+                        <div class="onboarding-step-panel" data-step="5">
+                            <h2 class="step-heading">Your Skin Profile is Ready!</h2>
+                            <p class="step-subheading">Here is a quick overview of your self-reported profile before
+                                generating your AI plan.</p>
+
+                            <div class="summary-card glass-card">
+                                <div class="summary-row">
+                                    <span class="summary-label"><i data-lucide="smile"></i> Skin Type:</span>
+                                    <span id="summary-skin-type" class="summary-value badge-pill">Oily</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span class="summary-label"><i data-lucide="alert-circle"></i> Target
+                                        Concerns:</span>
+                                    <div id="summary-concerns" class="summary-pills-list">
+                                        <!-- Dynamic concern badges -->
+                                    </div>
+                                </div>
+                                <div class="summary-row">
+                                    <span class="summary-label"><i data-lucide="coffee"></i> Lifestyle:</span>
+                                    <span id="summary-lifestyle" class="summary-value">Moderate water, 7 hrs
+                                        sleep</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span class="summary-label"><i data-lucide="calendar"></i> Habit Level:</span>
+                                    <span id="summary-habits" class="summary-value">Moderate consistency</span>
+                                </div>
+                            </div>
+
+                            <div class="onboarding-complete-cta text-center">
+                                <button id="generate-plan-btn" class="btn btn-primary btn-xl glow-effect">
+                                    <i data-lucide="sparkles"></i>
+                                    <span>Generate My Skin Plan</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Navigation Controls -->
+                        <div class="onboarding-nav-bar">
+                            <button id="onboarding-prev-btn" class="btn btn-tertiary" disabled>
+                                <i data-lucide="chevron-left"></i>
+                                <span>Back</span>
+                            </button>
+                            <button id="onboarding-next-btn" class="btn btn-secondary">
+                                <span>Continue</span>
+                                <i data-lucide="chevron-right"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 3: DASHBOARD HOME -->
+                <!-- ========================================== -->
+                <section id="view-dashboard" class="view-panel">
+                    <div class="dashboard-header-banner">
+                        <div class="greeting-text">
+                            <h1 id="dash-greeting-name">Good day, Glow Seeker 👋</h1>
+                            <p class="dash-subtitle">Here is your skincare intelligence snapshot and daily ritual
+                                progress.</p>
+                        </div>
+                        <div class="dash-header-actions">
+                            <button class="btn btn-secondary btn-sm" id="edit-profile-btn">
+                                <i data-lucide="edit-3"></i>
+                                <span>Edit Skin Profile</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TOP SUMMARY WIDGET CARDS -->
+                    <div class="dashboard-stats-grid">
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon rose"><i data-lucide="fingerprint"></i></div>
+                            <div class="stat-content">
+                                <span class="stat-label">Skin Type</span>
+                                <h3 id="dash-stat-skin-type" class="stat-value">Combination</h3>
+                                <span class="stat-sub" id="dash-stat-concerns-count">3 active concerns</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon peach"><i data-lucide="flame"></i></div>
+                            <div class="stat-content">
+                                <span class="stat-label">Current Streak</span>
+                                <h3 id="dash-stat-streak" class="stat-value">0 Days</h3>
+                                <span class="stat-sub">Keep momentum going!</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon sage"><i data-lucide="droplet"></i></div>
+                            <div class="stat-content">
+                                <span class="stat-label">Hydration Today</span>
+                                <h3 id="dash-stat-hydration" class="stat-value">0.0 / 2.5 L</h3>
+                                <div class="mini-progress-bar">
+                                    <div id="dash-stat-hydration-bar" class="fill" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon purple"><i data-lucide="check-circle-2"></i></div>
+                            <div class="stat-content">
+                                <span class="stat-label">Routine Today</span>
+                                <h3 id="dash-stat-routine-pct" class="stat-value">0%</h3>
+                                <div class="mini-progress-bar">
+                                    <div id="dash-stat-routine-bar" class="fill" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DASHBOARD MAIN TWO-COLUMN LAYOUT -->
+                    <div class="dashboard-grid">
+                        <!-- Left Column: Today's Ritual & Skin Insight -->
+                        <div class="dash-col-main">
+
+                            <!-- TODAY'S RITUAL CARD -->
+                            <div class="dashboard-card glass-card">
+                                <div class="card-header-flex">
+                                    <div>
+                                        <h2>Today's Ritual</h2>
+                                        <p class="card-subtext">Tick off steps as you complete them to maintain your
+                                            streak.</p>
+                                    </div>
+                                    <div class="ritual-tabs">
+                                        <button class="tab-btn active" data-tab="morning" id="dash-tab-morning">
+                                            <i data-lucide="sun"></i> Morning
+                                        </button>
+                                        <button class="tab-btn" data-tab="night" id="dash-tab-night">
+                                            <i data-lucide="moon"></i> Night
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="dash-ritual-steps-container" class="checklist-steps-list">
+                                    <!-- Dynamic Steps rendering -->
+                                </div>
+                            </div>
+
+                            <!-- TODAY'S SKIN INSIGHT -->
+                            <div class="dashboard-card insight-card glass-card">
+                                <div class="insight-badge">
+                                    <i data-lucide="sparkles"></i>
+                                    <span>TODAY'S SKIN INSIGHT</span>
+                                </div>
+                                <h3 id="insight-title">Consistency beats intensity</h3>
+                                <p id="insight-text">
+                                    Gentle, regular application of barrier-supporting ingredients yields better skin
+                                    health over time than harsh exfoliation.
+                                </p>
+                                <div class="insight-footer">
+                                    <span id="insight-tag" class="tag-pill">Barrier Health</span>
+                                    <button id="next-insight-btn" class="btn btn-text">Next Insight <i
+                                            data-lucide="arrow-right"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Quick Hydration Logger & Recommended Actives -->
+                        <div class="dash-col-side">
+                            <!-- QUICK HYDRATION LOGGER -->
+                            <div class="dashboard-card glass-card">
+                                <div class="card-header-flex">
+                                    <h3>Quick Hydration Log</h3>
+                                    <i data-lucide="droplet" class="icon-accent-sage"></i>
+                                </div>
+                                <div class="hydration-ring-compact">
+                                    <div class="ring-circle">
+                                        <span id="dash-ring-pct">0%</span>
+                                        <span class="ring-label">Goal Met</span>
+                                    </div>
+                                </div>
+                                <div class="quick-add-grid">
+                                    <button class="btn btn-secondary btn-sm log-water-btn" data-amount="0.25">
+                                        +250ml <i data-lucide="glass-water"></i>
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm log-water-btn" data-amount="0.5">
+                                        +500ml <i data-lucide="droplets"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- RECOMMENDED INGREDIENTS PREVIEW -->
+                            <div class="dashboard-card glass-card">
+                                <div class="card-header-flex">
+                                    <h3>Key Actives For You</h3>
+                                    <button class="btn btn-text btn-sm" id="view-all-ingredients-btn">View All</button>
+                                </div>
+                                <div id="dash-key-actives-list" class="actives-mini-list">
+                                    <!-- Rendered dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 4: AI SKIN PLAN & ANALYSIS -->
+                <!-- ========================================== -->
+                <section id="view-ai-plan" class="view-panel">
+                    <div class="ai-plan-header glass-card">
+                        <div class="ai-plan-header-top">
+                            <div>
+                                <span id="ai-engine-source-badge" class="badge-pill badge-sparkle">
+                                    <i data-lucide="sparkles"></i>
+                                    <span>Gemini AI Intelligence</span>
+                                </span>
+                                <h1 class="page-title">Your Personalized Skin Plan</h1>
+                                <p class="page-subtitle">Based on your self-reported profile, skin type, concerns, and
+                                    lifestyle.</p>
+                            </div>
+                            <button id="re-generate-plan-btn" class="btn btn-secondary">
+                                <i data-lucide="refresh-cw"></i>
+                                <span>Re-analyze</span>
+                            </button>
+                        </div>
+
+                        <!-- SKIN SNAPSHOT HEADER BAR -->
+                        <div class="skin-snapshot-bar">
+                            <div class="snapshot-item">
+                                <span class="label">Skin Type</span>
+                                <span id="ai-snapshot-type" class="val highlight">Oily</span>
+                            </div>
+                            <div class="snapshot-item">
+                                <span class="label">Primary Focus</span>
+                                <div id="ai-snapshot-concerns" class="val-pills"></div>
+                            </div>
+                            <div class="snapshot-item">
+                                <span class="label">Skin Balance Visual</span>
+                                <div class="balance-score-badge">
+                                    <span id="ai-balance-score">88</span> / 100
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI PLAN DETAILED CARDS GRID -->
+                    <div class="ai-plan-grid">
+
+                        <!-- OVERVIEW SUMMARY CARD -->
+                        <div class="ai-card glass-card full-width">
+                            <div class="card-title-with-icon">
+                                <i data-lucide="compass" class="icon-rose"></i>
+                                <h2>Skin Overview & Strategy</h2>
+                            </div>
+                            <p id="ai-plan-summary" class="ai-summary-text">
+                                Loading your skincare plan overview...
+                            </p>
+                        </div>
+
+                        <!-- MORNING RITUAL -->
+                        <div class="ai-card glass-card">
+                            <div class="card-title-with-icon">
+                                <i data-lucide="sun" class="icon-peach"></i>
+                                <h2>Your Morning Ritual</h2>
+                            </div>
+                            <div id="ai-morning-steps-list" class="ritual-steps-detailed">
+                                <!-- Morning steps rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- NIGHT RITUAL -->
+                        <div class="ai-card glass-card">
+                            <div class="card-title-with-icon">
+                                <i data-lucide="moon" class="icon-purple"></i>
+                                <h2>Your Night Ritual</h2>
+                            </div>
+                            <div id="ai-night-steps-list" class="ritual-steps-detailed">
+                                <!-- Night steps rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- INGREDIENTS TO LOOK FOR & AVOID -->
+                        <div class="ai-card glass-card">
+                            <div class="card-title-with-icon">
+                                <i data-lucide="check-circle-2" class="icon-sage"></i>
+                                <h2>Suggested Active Ingredients</h2>
+                            </div>
+                            <ul id="ai-suggested-ingredients" class="bullet-list green-checks">
+                                <!-- Suggested ingredients -->
+                            </ul>
+                        </div>
+
+                        <div class="ai-card glass-card">
+                            <div class="card-title-with-icon">
+                                <i data-lucide="alert-triangle" class="icon-rose"></i>
+                                <h2>What to Avoid / Use with Caution</h2>
+                            </div>
+                            <ul id="ai-avoid-ingredients" class="bullet-list red-crosses">
+                                <!-- Ingredients to avoid -->
+                            </ul>
+                        </div>
+
+                        <!-- LIFESTYLE TIPS -->
+                        <div class="ai-card glass-card full-width">
+                            <div class="card-title-with-icon">
+                                <i data-lucide="heart-pulse" class="icon-peach"></i>
+                                <h2>Lifestyle & Skin Synergy</h2>
+                            </div>
+                            <div id="ai-lifestyle-tips" class="lifestyle-tips-grid">
+                                <!-- Lifestyle tips cards -->
+                            </div>
+                        </div>
+
+                        <!-- DERMATOLOGIST & MEDICAL SAFETY DISCLAIMER -->
+                        <div class="ai-card medical-disclaimer-card full-width">
+                            <div class="disclaimer-header">
+                                <i data-lucide="shield-alert"></i>
+                                <h3>Important Medical Safety & Dermatologist Note</h3>
+                            </div>
+                            <p id="ai-dermatologist-note" class="disclaimer-text">
+                                This is general skincare information, not a medical diagnosis. For persistent, severe or
+                                worsening skin problems, consult a qualified dermatologist.
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 5: PERSONALIZED ROUTINE DETAIL -->
+                <!-- ========================================== -->
+                <section id="view-routine" class="view-panel">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="page-title">Personalized Skincare Routine</h1>
+                            <p class="page-subtitle">Understand the purpose and technique behind every single step.</p>
+                        </div>
+                        <div class="tab-toggle-pill">
+                            <button class="routine-toggle-btn active" data-routine="morning" id="routine-morn-btn"><i
+                                    data-lucide="sun"></i> Morning Ritual</button>
+                            <button class="routine-toggle-btn" data-routine="night" id="routine-night-btn"><i
+                                    data-lucide="moon"></i> Evening Ritual</button>
+                        </div>
+                    </div>
+
+                    <div id="routine-details-container" class="routine-steps-expanded">
+                        <!-- Rendered step by step card details -->
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 6: HYDRATION TRACKER -->
+                <!-- ========================================== -->
+                <section id="view-hydration" class="view-panel">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="page-title">Hydration Tracker</h1>
+                            <p class="page-subtitle">Maintain healthy, hydrated skin from within by monitoring daily
+                                fluid intake.</p>
+                        </div>
+                    </div>
+
+                    <div class="hydration-dashboard-grid">
+                        <!-- MAIN HYDRATION CARD WITH RING -->
+                        <div class="hydration-main-card glass-card text-center">
+                            <div class="water-ring-container">
+                                <canvas id="hydration-canvas" width="220" height="220"></canvas>
+                                <div class="water-ring-center">
+                                    <i data-lucide="droplets" class="icon-accent-sage"></i>
+                                    <h2 id="hydration-current-amount">1.6 L</h2>
+                                    <span id="hydration-target-amount">Goal: 2.5 L</span>
+                                    <span id="hydration-pct-badge" class="badge-pill">64% Met</span>
+                                </div>
+                            </div>
+
+                            <div class="water-actions-grid">
+                                <button class="btn btn-secondary add-water-btn" data-amount="0.25">
+                                    +250 ml (Glass)
+                                </button>
+                                <button class="btn btn-secondary add-water-btn" data-amount="0.5">
+                                    +500 ml (Bottle)
+                                </button>
+                                <button class="btn btn-tertiary reset-water-btn" id="reset-today-water-btn">
+                                    Reset Today
+                                </button>
+                            </div>
+
+                            <div class="water-goal-setting">
+                                <label for="set-water-goal-input">Custom Daily Goal (L):</label>
+                                <div class="goal-input-group">
+                                    <input type="number" id="set-water-goal-input" min="1.0" max="6.0" step="0.5"
+                                        value="2.5" class="form-input-sm">
+                                    <button id="save-water-goal-btn" class="btn btn-secondary btn-sm">Save Goal</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- WEEKLY HYDRATION HISTORY CHART -->
+                        <div class="hydration-chart-card glass-card">
+                            <div class="card-header-flex">
+                                <h3>Weekly Hydration History</h3>
+                                <span class="badge-pill">7-Day Trend</span>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="hydration-history-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 7: DAILY ROUTINE TRACKER -->
+                <!-- ========================================== -->
+                <section id="view-tracker" class="view-panel">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="page-title">Daily Habit Tracker & Streak</h1>
+                            <p class="page-subtitle">Track your morning and evening skincare consistency to build
+                                long-term skin barrier health.</p>
+                        </div>
+                        <div class="streak-banner-card glass-card">
+                            <i data-lucide="flame" class="fire-glow"></i>
+                            <div>
+                                <span class="streak-count" id="tracker-streak-num">0 Days</span>
+                                <span class="streak-label">Active SKINORA Streak</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MILESTONE BADGES -->
+                    <div class="milestones-row">
+                        <div class="milestone-badge" data-days="3">
+                            <div class="badge-icon">🌱</div>
+                            <span class="title">3 Days</span>
+                            <span class="sub">First Spark</span>
+                        </div>
+                        <div class="milestone-badge" data-days="7">
+                            <div class="badge-icon">🔥</div>
+                            <span class="title">7 Days</span>
+                            <span class="sub">Barrier Booster</span>
+                        </div>
+                        <div class="milestone-badge" data-days="14">
+                            <div class="badge-icon">✨</div>
+                            <span class="title">14 Days</span>
+                            <span class="sub">Glow Master</span>
+                        </div>
+                        <div class="milestone-badge" data-days="30">
+                            <div class="badge-icon">👑</div>
+                            <span class="title">30 Days</span>
+                            <span class="sub">Skinora Legend</span>
+                        </div>
+                    </div>
+
+                    <!-- CHECKLIST PANELS -->
+                    <div class="tracker-checklists-grid">
+                        <div class="checklist-card glass-card">
+                            <div class="checklist-header">
+                                <i data-lucide="sun" class="icon-peach"></i>
+                                <h2>Morning Checklist</h2>
+                                <span id="tracker-morning-pct" class="badge-pill">0% Done</span>
+                            </div>
+                            <div id="tracker-morning-list" class="checklist-interactive-group">
+                                <!-- Checkboxes rendered dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="checklist-card glass-card">
+                            <div class="checklist-header">
+                                <i data-lucide="moon" class="icon-purple"></i>
+                                <h2>Night Checklist</h2>
+                                <span id="tracker-night-pct" class="badge-pill">0% Done</span>
+                            </div>
+                            <div id="tracker-night-list" class="checklist-interactive-group">
+                                <!-- Checkboxes rendered dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 8: SKIN JOURNAL -->
+                <!-- ========================================== -->
+                <section id="view-journal" class="view-panel">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="page-title">Personal Skin Journal</h1>
+                            <p class="page-subtitle">Document daily changes, breakouts, redness, oiliness, and mood to
+                                identify skin triggers.</p>
+                        </div>
+                        <button id="open-new-journal-btn" class="btn btn-primary">
+                            <i data-lucide="plus"></i>
+                            <span>New Entry</span>
+                        </button>
+                    </div>
+
+                    <!-- JOURNAL ENTRY FORM CONTAINER (Toggleable) -->
+                    <div id="journal-form-card" class="journal-form-card glass-card hidden">
+                        <h2 id="journal-form-title">Log Today's Skin Condition</h2>
+                        <form id="journal-entry-form">
+                            <div class="form-grid-2">
+                                <div class="control-group">
+                                    <label for="journal-date">Entry Date</label>
+                                    <input type="date" id="journal-date" class="form-input" required>
+                                </div>
+                                <div class="control-group">
+                                    <label for="journal-condition">Overall Skin Feeling</label>
+                                    <select id="journal-condition" class="form-select">
+                                        <option value="Great Glow ✨">Great Glow ✨</option>
+                                        <option value="Calm & Hydrated 🌿" selected>Calm & Hydrated 🌿</option>
+                                        <option value="Slightly Dry / Tight 🌵">Slightly Dry / Tight 🌵</option>
+                                        <option value="Oily / Shiny 💧">Oily / Shiny 💧</option>
+                                        <option value="Breakouts / Irritated ⚠️">Breakouts / Irritated ⚠️</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grid-3">
+                                <div class="control-group">
+                                    <label for="journal-breakouts">Breakout Severity (1-5)</label>
+                                    <input type="range" id="journal-breakouts" min="1" max="5" value="1"
+                                        class="form-range">
+                                </div>
+                                <div class="control-group">
+                                    <label for="journal-oiliness">Oiliness Level (1-5)</label>
+                                    <input type="range" id="journal-oiliness" min="1" max="5" value="2"
+                                        class="form-range">
+                                </div>
+                                <div class="control-group">
+                                    <label for="journal-redness">Redness / Irritation (1-5)</label>
+                                    <input type="range" id="journal-redness" min="1" max="5" value="1"
+                                        class="form-range">
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label for="journal-notes">Daily Notes & Observations</label>
+                                <textarea id="journal-notes" rows="3" class="form-textarea"
+                                    placeholder="E.g., Tried a new Vitamin C serum, ate spicy food, had 8 hours sleep..."></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" id="cancel-journal-btn" class="btn btn-tertiary">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Journal Entry</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- JOURNAL TIMELINE ENTRIES -->
+                    <div id="journal-timeline" class="journal-timeline-container">
+                        <!-- Timeline entries rendered here -->
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 9: PROGRESS ANALYTICS -->
+                <!-- ========================================== -->
+                <section id="view-progress" class="view-panel">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="page-title">Progress & Analytics</h1>
+                            <p class="page-subtitle">Track your consistency trends and hydration history over time.</p>
+                        </div>
+                    </div>
+
+                    <div class="analytics-grid">
+                        <div class="analytics-card glass-card">
+                            <h3>Routine Completion Consistency (30 Days)</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="routine-consistency-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="analytics-card glass-card">
+                            <h3>Hydration Intake Trend</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="analytics-hydration-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 10: INGREDIENT LIBRARY -->
+                <!-- ========================================== -->
+                <section id="view-ingredients" class="view-panel">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="page-title">Ingredient Library</h1>
+                            <p class="page-subtitle">Demystify skincare ingredients. Learn what they do, who they are
+                                for, and how to use them.</p>
+                        </div>
+                    </div>
+
+                    <!-- SEARCH & FILTER BAR -->
+                    <div class="search-filter-bar glass-card">
+                        <div class="search-input-wrapper">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="ingredient-search-input"
+                                placeholder="Search ingredient name or benefit (e.g., Niacinamide, Retinol)..."
+                                class="form-input">
+                        </div>
+                        <div class="filter-pills" id="ingredient-category-pills">
+                            <button class="pill-btn active" data-cat="All">All</button>
+                            <button class="pill-btn" data-cat="Hydration">Hydration</button>
+                            <button class="pill-btn" data-cat="Brightening">Brightening</button>
+                            <button class="pill-btn" data-cat="Acne / Oil">Acne & Oil Control</button>
+                            <button class="pill-btn" data-cat="Barrier Repair">Barrier Repair</button>
+                            <button class="pill-btn" data-cat="Anti-Aging">Anti-Aging</button>
+                            <button class="pill-btn" data-cat="Calming">Calming</button>
+                        </div>
+                    </div>
+
+                    <!-- INGREDIENTS GRID -->
+                    <div id="ingredients-grid" class="cards-grid ingredients-grid">
+                        <!-- Ingredient cards rendered dynamically -->
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 11: PRODUCT RECOMMENDATIONS -->
+                <!-- ========================================== -->
+                <section id="view-products" class="view-panel">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="page-title">Recommended Products</h1>
+                            <p class="page-subtitle">Curated skincare formulations filtered for your skin profile and
+                                target actives.</p>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCT CATEGORY TABS -->
+                    <div class="product-filters-bar glass-card">
+                        <div class="filter-pills" id="product-category-tabs">
+                            <button class="pill-btn active" data-cat="All">All Categories</button>
+                            <button class="pill-btn" data-cat="Cleanser">Cleansers</button>
+                            <button class="pill-btn" data-cat="Serum">Serums</button>
+                            <button class="pill-btn" data-cat="Moisturizer">Moisturizers</button>
+                            <button class="pill-btn" data-cat="Sunscreen">Sunscreens</button>
+                            <button class="pill-btn" data-cat="Treatment">Treatments</button>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCTS GRID -->
+                    <div id="products-grid" class="cards-grid products-grid">
+                        <!-- Product cards rendered dynamically -->
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 12: FAVORITES -->
+                <!-- ========================================== -->
+                <section id="view-favorites" class="view-panel">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="page-title">My Favorites</h1>
+                            <p class="page-subtitle">Your saved ingredients, articles, and product matches in one place.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="favorites-tabs">
+                        <button class="tab-btn active" data-fav-tab="ingredients"
+                            id="fav-tab-ingredients">Ingredients</button>
+                        <button class="tab-btn" data-fav-tab="products" id="fav-tab-products">Products</button>
+                        <button class="tab-btn" data-fav-tab="articles" id="fav-tab-articles">Articles</button>
+                    </div>
+
+                    <div id="favorites-content-grid" class="cards-grid">
+                        <!-- Favorites rendered dynamically -->
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 13: SKIN SCHOOL (LEARNING HUB) -->
+                <!-- ========================================== -->
+                <section id="view-school" class="view-panel">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="page-title">Skin School</h1>
+                            <p class="page-subtitle">Dermatology-informed skincare education, active guides, and habit
+                                masterclasses.</p>
+                        </div>
+                    </div>
+
+                    <div class="school-categories-grid">
+                        <div class="school-cat-card glass-card" data-cat="basics">
+                            <i data-lucide="book-open" class="icon-rose"></i>
+                            <h3>Skin Basics</h3>
+                            <p>Barrier structure, skin type identification, and fundamental principles.</p>
+                        </div>
+                        <div class="school-cat-card glass-card" data-cat="ingredients">
+                            <i data-lucide="flask-conical" class="icon-peach"></i>
+                            <h3>Understanding Actives</h3>
+                            <p>How to combine Niacinamide, Vitamin C, Acids, and Retinoids safely.</p>
+                        </div>
+                        <div class="school-cat-card glass-card" data-cat="routine">
+                            <i data-lucide="layers" class="icon-sage"></i>
+                            <h3>Routine Masterclass</h3>
+                            <p>Proper order of application, morning vs. night layering, exfoliation tips.</p>
+                        </div>
+                        <div class="school-cat-card glass-card" data-cat="lifestyle">
+                            <i data-lucide="sun" class="icon-purple"></i>
+                            <h3>Lifestyle & Glow</h3>
+                            <p>Impact of hydration, sleep cycles, stress hormones, and UV protection.</p>
+                        </div>
+                    </div>
+
+                    <h2 class="section-subtitle mt-4">Featured Educational Articles</h2>
+                    <div id="school-articles-grid" class="cards-grid school-articles-grid">
+                        <!-- Articles rendered dynamically -->
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- VIEW 14: SETTINGS -->
+                <!-- ========================================== -->
+                <section id="view-settings" class="view-panel">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="page-title">Settings & Preferences</h1>
+                            <p class="page-subtitle">Configure AI keys, themes, and manage your local data.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-container">
+
+                        <!-- GEMINI API CONFIGURATION CARD -->
+                        <div class="settings-card glass-card">
+                            <div class="card-header-flex">
+                                <div class="title-group">
+                                    <i data-lucide="cpu" class="icon-sparkle"></i>
+                                    <h3>Google Gemini AI Configuration</h3>
+                                </div>
+                                <span class="badge-pill badge-sparkle">Optional</span>
+                            </div>
+                            <p class="settings-desc">
+                                SKINORA can connect directly to Google's Gemini API to generate personalized skin plans.
+                                If no key is provided, SKINORA automatically relies on its comprehensive curated
+                                skincare engine.
+                            </p>
+
+                            <div class="developer-security-note">
+                                <i data-lucide="shield-alert"></i>
+                                <div>
+                                    <strong>Developer Security Note:</strong>
+                                    <p>Never expose a production API key in client-side JavaScript. Move Gemini requests
+                                        to a backend/serverless function before production deployment.</p>
+                                </div>
+                            </div>
+
+                            <div class="control-group mt-3">
+                                <label for="settings-gemini-key">Gemini API Key</label>
+                                <div class="input-with-button">
+                                    <input type="password" id="settings-gemini-key" class="form-input"
+                                        placeholder="AIzaSy... (or leave blank for local engine)">
+                                    <button id="save-api-key-btn" class="btn btn-secondary">Save Key</button>
+                                </div>
+                                <span id="api-key-status" class="status-hint text-muted mt-1">Status: Using SKINORA
+                                    Curated Recommendation Engine</span>
+                            </div>
+                        </div>
+
+                        <!-- PROFILE MANAGEMENT -->
+                        <div class="settings-card glass-card">
+                            <div class="card-header-flex">
+                                <div class="title-group">
+                                    <i data-lucide="user" class="icon-rose"></i>
+                                    <h3>Skin Profile & Assessment</h3>
+                                </div>
+                                <button id="settings-retake-onboarding" class="btn btn-secondary btn-sm">Re-take Skin
+                                    Quiz</button>
+                            </div>
+                            <p class="settings-desc">Update your skin type, concerns, or lifestyle preferences anytime.
+                            </p>
+                        </div>
+
+                        <!-- DATA MANAGEMENT -->
+                        <div class="settings-card glass-card border-danger">
+                            <div class="card-header-flex">
+                                <div class="title-group">
+                                    <i data-lucide="trash-2" class="icon-danger"></i>
+                                    <h3>Data & Local Storage</h3>
+                                </div>
+                                <button id="reset-all-data-btn" class="btn btn-danger btn-sm">Reset All App
+                                    Data</button>
+                            </div>
+                            <p class="settings-desc">Clear all stored skin profile data, routine progress, hydration
+                                logs, and journal entries from localStorage.</p>
+                        </div>
+
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <nav class="mobile-bottom-nav mobile-only" aria-label="Mobile Navigation">
+        <button class="mobile-nav-item active" data-view="dashboard">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Home</span>
+        </button>
+        <button class="mobile-nav-item" data-view="routine">
+            <i data-lucide="sun"></i>
+            <span>Routine</span>
+        </button>
+        <button class="mobile-nav-item" data-view="hydration">
+            <i data-lucide="droplet"></i>
+            <span>Water</span>
+        </button>
+        <button class="mobile-nav-item" data-view="journal">
+            <i data-lucide="book-open"></i>
+            <span>Journal</span>
+        </button>
+        <button class="mobile-nav-item" data-view="school">
+            <i data-lucide="graduation-cap"></i>
+            <span>School</span>
+        </button>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- MODALS -->
+    <!-- ========================================== -->
+
+    <!-- GLOBAL SEARCH MODAL -->
+    <div id="search-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+        <div class="modal-card search-modal-card glass-card">
+            <div class="search-modal-header">
+                <i data-lucide="search"></i>
+                <input type="text" id="modal-search-input"
+                    placeholder="Type to search ingredients, articles, products, steps..." autofocus>
+                <button class="close-modal-btn" id="close-search-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div id="search-modal-results" class="search-modal-results">
+                <p class="search-empty-hint">Start typing to see instant results...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- INGREDIENT DETAIL MODAL -->
+    <div id="ingredient-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+        <div class="modal-card detail-modal-card glass-card">
+            <button class="close-modal-btn" id="close-ingredient-modal"><i data-lucide="x"></i></button>
+            <div id="ingredient-modal-body" class="modal-body-content">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ARTICLE READER MODAL -->
+    <div id="article-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+        <div class="modal-card article-modal-card glass-card">
+            <button class="close-modal-btn" id="close-article-modal"><i data-lucide="x"></i></button>
+            <div id="article-modal-body" class="article-body-content">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- RESET DATA CONFIRMATION MODAL -->
+    <div id="reset-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+        <div class="modal-card reset-modal-card glass-card text-center">
+            <i data-lucide="alert-triangle" class="icon-danger-lg"></i>
+            <h2>Reset All Data?</h2>
+            <p>This action will erase your skin profile, routine history, hydration logs, favorites, and journal
+                entries. This cannot be undone.</p>
+            <div class="modal-actions-center">
+                <button id="cancel-reset-btn" class="btn btn-tertiary">Cancel</button>
+
+                <button id="confirm-reset-btn" class="btn btn-danger">Yes, Erase Everything</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLOATING QUICK ACTION BUTTON (FAB) -->
+    <div id="quick-fab-container" class="quick-fab-container">
+        <button id="main-fab-btn" class="fab-btn" title="Quick Skincare Actions" aria-label="Quick Actions">
+            <i data-lucide="zap"></i>
+        </button>
+        <div class="fab-menu">
+            <button data-action="quick-add-water-250" class="fab-item-btn" title="Log +250ml Water">
+                <i data-lucide="droplet"></i>
+                <span>+250ml Water</span>
+            </button>
+            <button data-action="open-journal" class="fab-item-btn" title="Write Skin Journal">
+                <i data-lucide="book-open"></i>
+                <span>Log Journal</span>
+            </button>
+            <button data-action="open-search" class="fab-item-btn" title="Search Everything">
+                <i data-lucide="search"></i>
+                <span>Search ⌘K</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script src="script.js"></script>
+</body>
+
+</html>

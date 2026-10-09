@@ -1,0 +1,18 @@
+{
+    "name": "skinora-app",
+    "version": "1.0.0",
+    "description": "SKINORA — Personalized AI Skincare Intelligence App",
+    "main": "index.html",
+    "scripts": {
+        "start": "python -m http.server 8080",
+        "apk:build": "npx cap add android && npx cap sync && npx cap copy"
+    },
+    "keywords": [
+        "skincare",
+        "ai",
+        "android",
+        "apk"
+    ],
+    "author": "SKINORA Team",
+    "license": "MIT"
+}
